@@ -43,6 +43,7 @@ import sys
 
 from django.conf import settings
 from django.template import RequestContext
+from django.shortcuts import render_to_response
 from django.views.decorators.csrf import csrf_exempt
 from django.core.exceptions import ImproperlyConfigured
 from django.http import HttpResponse, HttpResponseServerError
@@ -74,12 +75,11 @@ def handle_xmlrpc(request):
         The HttpRequest object that carries the XML-RPC call. If this is a
         GET request, nothing will happen (we only accept POST requests)
     """
-    from django.shortcuts import render_to_response
-    response = HttpResponse()
     if request.method == "POST":
         if DEBUG:
             print request.raw_post_data
         try:
+            response = HttpResponse(content_type='text/xml')
             response.write(
                 xmlrpcdispatcher._marshaled_dispatch(request.raw_post_data))
             if DEBUG:
