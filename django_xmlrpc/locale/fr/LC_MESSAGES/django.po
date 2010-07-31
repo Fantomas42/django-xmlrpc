@@ -1,0 +1,49 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: django-xmlrpc\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2010-07-31 15:33+0200\n"
+"PO-Revision-Date: 2010-07-31 15:50+0100\n"
+"Last-Translator: Fantomas <Fantomas42@gmail.com>\n"
+"Language-Team: Fantomas42 <fantomas42@gmail.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: French\n"
+"X-Poedit-Country: FRANCE\n"
+"X-Poedit-SourceCharset: utf-8\n"
+
+#: decorators.py:60
+msgid "Username and/or password is incorrect"
+msgstr "Nom d'utilisateur et/ou mot de passe incorrect"
+
+#: decorators.py:68
+msgid "Permission denied"
+msgstr "Permission refusée"
+
+#: templates/xmlrpc_get.html:4
+#: templates/xmlrpc_get.html.py:7
+msgid "XML-RPC Service"
+msgstr "Service XML-RPC"
+
+#: templates/xmlrpc_get.html:9
+msgid "You need to invoke this service using an XML-RPC Client."
+msgstr "Vous devez invoquer ce service en utilisant un client XML-RPC."
+
+#: templates/xmlrpc_get.html:11
+msgid "The following methods are available :"
+msgstr "Les méthodes suivantes sont disponibles :"
+
+#: templates/xmlrpc_get.html:17
+msgid "Types of argument"
+msgstr "Types d'argument"
+
+#: templates/xmlrpc_get.html:19
+msgid "Type of return"
+msgstr "Type de retour"
+
