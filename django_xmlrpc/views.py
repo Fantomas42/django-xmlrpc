@@ -45,6 +45,7 @@ from django.conf import settings
 from django.template import RequestContext
 from dispatcher import DjangoXMLRPCDispatcher
 from decorators import xmlrpc_func, permission_required
+from django.views.decorators.csrf import csrf_exempt
 
 
 # We create a local DEBUG variable from the data in settings.
@@ -63,7 +64,7 @@ def test_xmlrpc(text):
     """Simply returns the args passed to it as a string"""
     return "Here's a response! %s" % str(text)
 
-
+@csrf_exempt
 def handle_xmlrpc(request):
     """Handles XML-RPC requests. All XML-RPC calls should be forwarded here
 
