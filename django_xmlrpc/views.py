@@ -42,6 +42,7 @@ import sys
 from django.core.exceptions import ImproperlyConfigured
 from django.http import HttpResponse, HttpResponseServerError
 from django.conf import settings
+from django.template import RequestContext
 from dispatcher import DjangoXMLRPCDispatcher
 from decorators import xmlrpc_func, permission_required
 
@@ -107,7 +108,8 @@ def handle_xmlrpc(request):
             template = settings.XMLRPC_GET_TEMPLATE
         else:
             template = 'xmlrpc_get.html'
-        return render_to_response(template, {'methods': method_list})
+        return render_to_response(template, {'methods': method_list},
+                                  context_instance=RequestContext(request))
 
 
 # Load up any methods that have been registered with the server in settings
