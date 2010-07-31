@@ -1,0 +1,16 @@
+*~
+*.pyc
+TODO.txt
+README.html
+bin
+lib
+dist
+eggs
+parts
+build
+include
+downloads
+src_eggs
+develop-eggs
+.installed.cfg
+django_xmlrpc.egg-info/
