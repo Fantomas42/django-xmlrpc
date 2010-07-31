@@ -1,8 +1,9 @@
 """Uses SimpleXMLRPCServer's SimpleXMLRPCDispatcher to serve XML-RPC requests
 
 Authors::
-    Graham Binns,
+    Graham Binns
     Reza Mohammadi
+    Julien Fache
 
 Credit must go to Brendan W. McAdams <brendan.mcadams@thewintergrp.com>, who
 posted the original SimpleXMLRPCDispatcher to the Django wiki:
@@ -39,18 +40,19 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 import sys
-from django.core.exceptions import ImproperlyConfigured
-from django.http import HttpResponse, HttpResponseServerError
+
 from django.conf import settings
 from django.template import RequestContext
+from django.views.decorators.csrf import csrf_exempt
+from django.core.exceptions import ImproperlyConfigured
+from django.http import HttpResponse, HttpResponseServerError
+
 from dispatcher import DjangoXMLRPCDispatcher
 from decorators import xmlrpc_func, permission_required
-from django.views.decorators.csrf import csrf_exempt
 
 
 # We create a local DEBUG variable from the data in settings.
 DEBUG = hasattr(settings, 'XMLRPC_DEBUG') and settings.XMLRPC_DEBUG
-
 
 # Declare xmlrpcdispatcher correctly depending on our python version
 if sys.version_info[:3] >= (2, 5,):
