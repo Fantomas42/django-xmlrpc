@@ -1,27 +1,31 @@
+import os
 from setuptools import setup, find_packages
-setup(
-    name = 'django-xmlrpc',
-    version = '0.1.0',
-    description = 'XML-RPC Server App for the Django framework.',
-    keywords = 'django apps xmlrpc',
-    license = 'New BSD License',
-    author = 'Graham Binns',
-    author_email = 'graham.binns@gmail.com',
-    maintainer = 'Alexander Artemenko',
-    maintainer_email = 'svetlyak.40wt@gmail.com',
-    url = 'https://launchpad.net/django-xmlrpc',
-    install_requires = [],
-    dependency_links = [],
-    classifiers=[
-        'Development Status :: 3 - Alpha',
-        'Environment :: Plugins',
-        'Framework :: Django',
-        'Intended Audience :: Developers',
-        'License :: OSI Approved :: BSD License',
-        'Programming Language :: Python',
-        'Topic :: Software Development :: Libraries :: Python Modules',
-    ],
-    packages = find_packages(),
-    include_package_data = True,
-)
+
+setup(name = 'django-xmlrpc',
+      version = '0.1.1',
+      
+      description = 'XML-RPC Server App for the Django framework.',
+      long_description=open(os.path.join('README.rst')).read(),
+      keywords = 'django, service, xmlrpc',
+      
+      author = 'Graham Binns',
+      author_email = 'graham.binns@gmail.com',
+      maintainer = 'Fantomas42',
+      maintainer_email = 'fantomas42@gmail.com',
+      url = 'http://github.com/Fantomas42/django-xmlrpc',
+      
+      packages = find_packages(),
+      classifiers=[
+          'Framework :: Django',
+          'Development Status :: 5 - Production/Stable',
+          'Environment :: Web Environment',
+          'Programming Language :: Python',
+          'Intended Audience :: Developers',
+          'Operating System :: OS Independent',
+          'Topic :: Software Development :: Libraries :: Python Modules',],
+      
+      license = 'New BSD License',
+      include_package_data = True,
+      zip_safe=False
+      )
 

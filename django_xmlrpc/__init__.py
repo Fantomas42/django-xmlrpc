@@ -1,7 +1,8 @@
 """__init__ module for the django_xmlrpc package
 
-Author::
+Authors::
     Graham Binns
+    Julien Fache
 
 Credit must go to Brendan W. McAdams <brendan.mcadams@thewintergrp.com>, who
 posted the original SimpleXMLRPCDispatcher to the Django wiki:
@@ -37,7 +38,7 @@ LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
-VERSION = (0, 1, 0)
+VERSION = (0, 1, 1)
 __version__ = '.'.join(map(str, VERSION))
 
 from views import xmlrpcdispatcher
