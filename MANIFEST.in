@@ -1,1 +1,2 @@
+recursive-include django_xmlrpc/locale *
 recursive-include django_xmlrpc/templates *.html
