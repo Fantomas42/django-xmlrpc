@@ -44,9 +44,12 @@ import sys
 from django.conf import settings
 from django.template import RequestContext
 from django.shortcuts import render_to_response
-from django.views.decorators.csrf import csrf_exempt
 from django.core.exceptions import ImproperlyConfigured
 from django.http import HttpResponse, HttpResponseServerError
+try:
+    from django.views.decorators.csrf import csrf_exempt
+except ImportError:
+    from django.contrib.csrf.middleware import csrf_exempt
 
 from dispatcher import DjangoXMLRPCDispatcher
 from decorators import xmlrpc_func, permission_required
