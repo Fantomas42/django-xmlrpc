@@ -4,7 +4,7 @@ Django XML-RPC
 
 django_xmlrpc offers a means by which a Django developer can expose their views (or indeed any other function) using XML-RPC.
 
-This is a fork of the version hosted at : https://code.launchpad.net/~aartemenko/django-xmlrpc/svetlyak40wt compatible with Django 1.2.
+This is a fork of the version hosted at : https://code.launchpad.net/~aartemenko/django-xmlrpc/svetlyak40wt compatible with Django 1.1 and 1.2.
 
 .. contents::
 
