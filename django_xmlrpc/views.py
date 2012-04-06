@@ -41,6 +41,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 import sys
 
+import django
 from django.conf import settings
 from django.template import RequestContext
 from django.shortcuts import render_to_response
@@ -52,7 +53,7 @@ except ImportError:
     from django.contrib.csrf.middleware import csrf_exempt
 
 from dispatcher import DjangoXMLRPCDispatcher
-from decorators import xmlrpc_func, permission_required
+from decorators import xmlrpc_func
 
 
 # We create a local DEBUG variable from the data in settings.
@@ -65,10 +66,17 @@ else:
     xmlrpcdispatcher = DjangoXMLRPCDispatcher()
 
 
+def request_datas(request):
+    if django.VERSION[1] > 3:
+        return request.body
+    return request.raw_post_data
+
+
 @xmlrpc_func(returns='string', args=['string'])
 def test_xmlrpc(text):
     """Simply returns the args passed to it as a string"""
     return "Here's a response! %s" % str(text)
+
 
 @csrf_exempt
 def handle_xmlrpc(request):
@@ -80,11 +88,11 @@ def handle_xmlrpc(request):
     """
     if request.method == "POST":
         if DEBUG:
-            print request.raw_post_data
+            print request_datas(request)
         try:
             response = HttpResponse(content_type='text/xml')
             response.write(
-                xmlrpcdispatcher._marshaled_dispatch(request.raw_post_data))
+                xmlrpcdispatcher._marshaled_dispatch(request_datas(request)))
             if DEBUG:
                 print response
             return response
@@ -128,23 +136,23 @@ if hasattr(settings, 'XMLRPC_METHODS'):
 
         # Otherwise we try and find something that we can call
         i = path.rfind('.')
-        module, attr = path[:i], path[i+1:]
+        module, attr = path[:i], path[i + 1:]
 
         try:
             mod = __import__(module, globals(), locals(), [attr])
         except ImportError, ex:
-            raise ImproperlyConfigured, "Error registering XML-RPC method: " \
-                + "module %s can't be imported" % module
+            raise ImproperlyConfigured("Error registering XML-RPC method: " \
+                + "module %s can't be imported" % module)
 
         try:
             func = getattr(mod, attr)
         except AttributeError:
-            raise ImproperlyConfigured, 'Error registering XML-RPC method: ' \
-                + 'module %s doesn\'t define a method "%s"' % (module, attr)
+            raise ImproperlyConfigured('Error registering XML-RPC method: ' \
+                + 'module %s doesn\'t define a method "%s"' % (module, attr))
 
         if not callable(func):
-            raise ImproperlyConfigured, 'Error registering XML-RPC method: ' \
-                + '"%s" is not callable in module %s' % (attr, module)
+            raise ImproperlyConfigured('Error registering XML-RPC method: ' \
+                + '"%s" is not callable in module %s' % (attr, module))
 
         xmlrpcdispatcher.register_function(func, name)
 

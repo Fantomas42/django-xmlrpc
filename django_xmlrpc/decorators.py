@@ -69,7 +69,8 @@ class PermissionDeniedException(Fault):
 
 
 def xmlrpc_method(returns='string', args=None, name=None):
-    """Adds a signature to an XML-RPC function and register it with the dispatcher.
+    """Adds a signature to an XML-RPC function and register
+    it with the dispatcher.
 
     returns
         The return type of the function. This can either be a string
@@ -83,7 +84,6 @@ def xmlrpc_method(returns='string', args=None, name=None):
     # Args should be a list
     if args is None:
         args = []
-
 
     def _xmlrpc_func(func):
         """Inner function for XML-RPC method decoration. Adds a signature to
@@ -146,14 +146,10 @@ def permission_required(perm=None):
                 if perm and not user.has_perm(perm):
                     raise PermissionDeniedException
             except AuthenticationFailedException:
-#                log.error("Authentication Failed for username '%s'" % username)
                 raise
             except PermissionDeniedException:
-#                log.error(("Permission Denied. Username: '%s', " + \
-#                    "Required permission: %s") % (username, perm))
                 raise
             except:
-#                log.error(traceback.format_exc())
                 raise AuthenticationFailedException
             return func(user, *args)
 
@@ -172,7 +168,7 @@ def permission_required(perm=None):
                 "\nNote: Authentication is required."""
             if perm:
                 __authenticated_call.__doc__ += ' this function requires ' \
-                                             +  '"%s" permission.' % perm
+                                             + '"%s" permission.' % perm
 
         return __authenticated_call
 
