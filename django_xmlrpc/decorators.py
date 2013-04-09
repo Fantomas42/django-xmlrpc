@@ -92,11 +92,6 @@ def xmlrpc_method(returns='string', args=None, name=None):
         func
             The function to add the signature to
         """
-        # If name is not None, register the method with the dispatcher.
-        from django_xmlrpc.views import xmlrpcdispatcher
-        if name is not None:
-            xmlrpcdispatcher.register_function(func, name)
-
         # Add a signature to the function
         func._xmlrpc_signature = {
             'returns': returns,
