@@ -38,7 +38,12 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 from inspect import getargspec
-from SimpleXMLRPCServer import SimpleXMLRPCDispatcher
+
+try:
+    from xmlrpc.server import SimpleXMLRPCDispatcher
+except ImportError:  # Python 2
+    from SimpleXMLRPCServer import SimpleXMLRPCDispatcher
+
 from django.conf import settings
 
 

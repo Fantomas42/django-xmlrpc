@@ -40,6 +40,7 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 import sys
+from collections import Callable
 
 import django
 from django.conf import settings
@@ -47,13 +48,14 @@ from django.template import RequestContext
 from django.shortcuts import render_to_response
 from django.core.exceptions import ImproperlyConfigured
 from django.http import HttpResponse, HttpResponseServerError
+
 try:
     from django.views.decorators.csrf import csrf_exempt
 except ImportError:
     from django.contrib.csrf.middleware import csrf_exempt
 
-from dispatcher import DjangoXMLRPCDispatcher
-from decorators import xmlrpc_func
+from django_xmlrpc.dispatcher import DjangoXMLRPCDispatcher
+from django_xmlrpc.decorators import xmlrpc_func
 
 
 # We create a local DEBUG variable from the data in settings.
@@ -88,13 +90,13 @@ def handle_xmlrpc(request):
     """
     if request.method == "POST":
         if DEBUG:
-            print request_datas(request)
+            print(request_datas(request))
         try:
             response = HttpResponse(content_type='text/xml')
             response.write(
                 xmlrpcdispatcher._marshaled_dispatch(request_datas(request)))
             if DEBUG:
-                print response
+                print(response)
             return response
         except:
             return HttpResponseServerError()
@@ -117,8 +119,8 @@ def handle_xmlrpc(request):
         if hasattr(settings, 'XMLRPC_GET_TEMPLATE'):
             # This behaviour is deprecated
             if settings.DEBUG:
-                print "Use of settings.XMLRPC_GET_TEMPLATE is deprecated " \
-                    + "Please update your code to use django_xmlrpc/templates"
+                print("Use of settings.XMLRPC_GET_TEMPLATE is deprecated " \
+                    + "Please update your code to use django_xmlrpc/templates")
             template = settings.XMLRPC_GET_TEMPLATE
         else:
             template = 'xmlrpc_get.html'
@@ -130,7 +132,7 @@ def handle_xmlrpc(request):
 if hasattr(settings, 'XMLRPC_METHODS'):
     for path, name in settings.XMLRPC_METHODS:
         # if "path" is actually a function, just add it without fuss
-        if callable(path):
+        if isinstance(path, Callable):
             xmlrpcdispatcher.register_function(path, name)
             continue
 
@@ -140,7 +142,7 @@ if hasattr(settings, 'XMLRPC_METHODS'):
 
         try:
             mod = __import__(module, globals(), locals(), [attr])
-        except ImportError, ex:
+        except ImportError as ex:
             raise ImproperlyConfigured("Error registering XML-RPC method: " \
                 + "module %s can't be imported" % module)
 
@@ -150,7 +152,7 @@ if hasattr(settings, 'XMLRPC_METHODS'):
             raise ImproperlyConfigured('Error registering XML-RPC method: ' \
                 + 'module %s doesn\'t define a method "%s"' % (module, attr))
 
-        if not callable(func):
+        if not isinstance(func, Callable):
             raise ImproperlyConfigured('Error registering XML-RPC method: ' \
                 + '"%s" is not callable in module %s' % (attr, module))
 

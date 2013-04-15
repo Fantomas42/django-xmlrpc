@@ -41,4 +41,4 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 VERSION = (0, 1, 5)
 __version__ = '.'.join(map(str, VERSION))
 
-from views import xmlrpcdispatcher
+from django_xmlrpc.views import xmlrpcdispatcher
