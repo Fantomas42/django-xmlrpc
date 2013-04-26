@@ -40,6 +40,7 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 import sys
+from logging import getLogger
 from collections import Callable
 
 import django
@@ -58,8 +59,7 @@ from django_xmlrpc.dispatcher import DjangoXMLRPCDispatcher
 from django_xmlrpc.decorators import xmlrpc_func
 
 
-# We create a local DEBUG variable from the data in settings.
-DEBUG = hasattr(settings, 'XMLRPC_DEBUG') and settings.XMLRPC_DEBUG
+logger = getLogger('xmlrpc')
 
 # Declare xmlrpcdispatcher correctly depending on our python version
 if sys.version_info[:3] >= (2, 5,):
@@ -89,14 +89,12 @@ def handle_xmlrpc(request):
         GET request, nothing will happen (we only accept POST requests)
     """
     if request.method == "POST":
-        if DEBUG:
-            print(request_datas(request))
+        logger.info(request_datas(request))
         try:
             response = HttpResponse(content_type='text/xml')
             response.write(
                 xmlrpcdispatcher._marshaled_dispatch(request_datas(request)))
-            if DEBUG:
-                print(response)
+            logger.debug(response)
             return response
         except:
             return HttpResponseServerError()

@@ -44,12 +44,6 @@ try:
 except ImportError:  # Python 2
     from SimpleXMLRPCServer import SimpleXMLRPCDispatcher
 
-from django.conf import settings
-
-
-# If we need to debug, now we know
-DEBUG = hasattr(settings, 'XMLRPC_DEBUG') and settings.XMLRPC_DEBUG
-
 
 class DjangoXMLRPCDispatcher(SimpleXMLRPCDispatcher):
     """A simple XML-RPC dispatcher for Django.
