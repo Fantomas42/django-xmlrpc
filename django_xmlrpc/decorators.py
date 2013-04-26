@@ -60,7 +60,7 @@ class AuthenticationFailedException(Fault):
     """
     def __init__(self):
         Fault.__init__(self, AUTHENTICATION_FAILED_CODE,
-            _('Username and/or password is incorrect'))
+                       _('Username and/or password is incorrect'))
 
 
 class PermissionDeniedException(Fault):
@@ -99,7 +99,7 @@ def xmlrpc_method(returns='string', args=None, name=None):
         func._xmlrpc_signature = {
             'returns': returns,
             'args': args
-            }
+        }
         return func
 
     return _xmlrpc_func
@@ -165,8 +165,8 @@ def permission_required(perm=None):
             __authenticated_call.__doc__ = func.__doc__ + \
                 "\nNote: Authentication is required."""
             if perm:
-                __authenticated_call.__doc__ += ' this function requires ' \
-                                             + '"%s" permission.' % perm
+                __authenticated_call.__doc__ += (' this function requires '
+                                                 '"%s" permission.' % perm)
 
         return __authenticated_call
 

@@ -70,6 +70,6 @@ class DjangoXMLRPCDispatcher(SimpleXMLRPCDispatcher):
             sig = {
                 'returns': 'string',
                 'args': ['string' for arg in getargspec(func)[0]],
-                }
+            }
 
         return [sig['returns']] + sig['args']

@@ -117,18 +117,21 @@ if hasattr(settings, 'XMLRPC_METHODS'):
         try:
             mod = __import__(module, globals(), locals(), [attr])
         except ImportError as ex:
-            raise ImproperlyConfigured("Error registering XML-RPC method: " \
-                + "module %s can't be imported" % module)
+            raise ImproperlyConfigured(
+                "Error registering XML-RPC method: "
+                "module %s can't be imported" % module)
 
         try:
             func = getattr(mod, attr)
         except AttributeError:
-            raise ImproperlyConfigured('Error registering XML-RPC method: ' \
-                + 'module %s doesn\'t define a method "%s"' % (module, attr))
+            raise ImproperlyConfigured(
+                'Error registering XML-RPC method: '
+                'module %s doesn\'t define a method "%s"' % (module, attr))
 
         if not isinstance(func, Callable):
-            raise ImproperlyConfigured('Error registering XML-RPC method: ' \
-                + '"%s" is not callable in module %s' % (attr, module))
+            raise ImproperlyConfigured(
+                'Error registering XML-RPC method: '
+                '"%s" is not callable in module %s' % (attr, module))
 
         xmlrpcdispatcher.register_function(func, name)
 
