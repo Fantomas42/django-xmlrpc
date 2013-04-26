@@ -39,39 +39,23 @@ LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
-import sys
 from logging import getLogger
 from collections import Callable
 
-import django
 from django.conf import settings
 from django.template import RequestContext
 from django.shortcuts import render_to_response
 from django.core.exceptions import ImproperlyConfigured
-from django.http import HttpResponse, HttpResponseServerError
+from django.http import HttpResponse
+from django.http import HttpResponseServerError
+from django.views.decorators.csrf import csrf_exempt
 
-try:
-    from django.views.decorators.csrf import csrf_exempt
-except ImportError:
-    from django.contrib.csrf.middleware import csrf_exempt
-
-from django_xmlrpc.dispatcher import DjangoXMLRPCDispatcher
 from django_xmlrpc.decorators import xmlrpc_func
+from django_xmlrpc.dispatcher import DjangoXMLRPCDispatcher
 
 
 logger = getLogger('xmlrpc')
-
-# Declare xmlrpcdispatcher correctly depending on our python version
-if sys.version_info[:3] >= (2, 5,):
-    xmlrpcdispatcher = DjangoXMLRPCDispatcher(allow_none=False, encoding=None)
-else:
-    xmlrpcdispatcher = DjangoXMLRPCDispatcher()
-
-
-def request_datas(request):
-    if django.VERSION[1] > 3:
-        return request.body
-    return request.raw_post_data
+xmlrpcdispatcher = DjangoXMLRPCDispatcher(allow_none=False, encoding=None)
 
 
 @xmlrpc_func(returns='string', args=['string'])
@@ -89,11 +73,11 @@ def handle_xmlrpc(request):
         GET request, nothing will happen (we only accept POST requests)
     """
     if request.method == "POST":
-        logger.info(request_datas(request))
+        logger.info(request.body)
         try:
             response = HttpResponse(content_type='text/xml')
             response.write(
-                xmlrpcdispatcher._marshaled_dispatch(request_datas(request)))
+                xmlrpcdispatcher._marshaled_dispatch(request.body))
             logger.debug(response)
             return response
         except:
