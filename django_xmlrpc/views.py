@@ -39,6 +39,8 @@ LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
+# for autodiscovery of XMLRPC methods
+from importlib import import_module
 from logging import getLogger
 from collections import Callable
 
@@ -54,7 +56,7 @@ from django_xmlrpc.decorators import xmlrpc_func
 from django_xmlrpc.dispatcher import DjangoXMLRPCDispatcher
 
 
-logger = getLogger('xmlrpc')
+logger = getLogger("xmlrpc")
 xmlrpcdispatcher = DjangoXMLRPCDispatcher(allow_none=False, encoding=None)
 
 
@@ -101,6 +103,55 @@ def handle_xmlrpc(request):
         return render_to_response('xmlrpc_get.html', {'methods': method_list},
                                   context_instance=RequestContext(request))
 
+# Implement autodiscovery
+# Looks in app directorys for a module called 'xmlrpc_settings'
+# This should contain a distribution XMLRPC_METHODS declaration
+DIST_SETTINGS="xmlrpc_settings"
+if hasattr(settings, 'INSTALLED_APPS'):
+    logger.info("inspecting INSTALLED_APPS")
+    for app in settings.INSTALLED_APPS:
+        logger.debug("Checking %s" % app)
+        # app_path = imp.find_module('models', [app])
+        try:
+            logger.debug("Looking for %s.%s" % (app, DIST_SETTINGS))
+            xm = import_module('%s.%s' % (app, DIST_SETTINGS))
+            logger.info("Found %s.%s"% (app, DIST_SETTINGS))
+        except ImportError:
+            logger.debug("%s.%s not found, moving on" % (app, DIST_SETTINGS))
+            continue
+        if hasattr(xm, 'XMLRPC_METHODS'):
+            logger.info("Found XMLRPC_METHODS in %s" % app)
+            for path, method in xm.XMLRPC_METHODS:
+                # check if an imported function got passed
+                if isinstance(path, Callable):
+                    logger.info("registering '%s' as '%s')" % (path, method))
+                    continue
+                else:
+                    logger.debug("%s not callable, resolving path" % path)
+                # find the module containing the function
+                dot = path.rindex('.')
+                module, attr = path[:dot], path[dot + 1:]
+                logger.debug("checking module %s" % module)
+                try:
+                    mod = import_module(module)
+                except ImportError, e:
+                    # couldn't import configured module, could be a typo
+                    logger.warn("could not import '%s', please check your module's %s" % (module, DIST_SETTINGS))
+                    if settings.DEBUG:
+                        raise e
+                    continue
+                try:
+                    func = getattr(mod, attr)
+                except AttributeError:
+                    raise ImproperlyConfigured(
+                        'Error registering XML-RPC method: '
+                        'module %s doesn\'t define a method "%s"' % (module, attr))
+                if not isinstance(func, Callable):
+                    raise ImproperlyConfigured(
+                        'Error registering XML-RPC method: '
+                        '"%s" is not callable in module %s' % (attr, module))
+                logger.info("registering '%s.%s' as '%s" % (module, attr, method))
+                xmlrpcdispatcher.register_function(func, method)
 
 # Load up any methods that have been registered with the server in settings
 if hasattr(settings, 'XMLRPC_METHODS'):
