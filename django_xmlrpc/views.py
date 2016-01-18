@@ -111,8 +111,8 @@ if hasattr(settings, 'INSTALLED_APPS'):
     logger.info("inspecting INSTALLED_APPS")
     for app in settings.INSTALLED_APPS:
         logger.debug("Checking %s" % app)
-        # app_path = imp.find_module('models', [app])
         try:
+            # check to see if app has a stock xmlrpc_settings module
             logger.debug("Looking for %s.%s" % (app, DIST_SETTINGS))
             xm = import_module('%s.%s' % (app, DIST_SETTINGS))
             logger.info("Found %s.%s"% (app, DIST_SETTINGS))
@@ -120,11 +120,14 @@ if hasattr(settings, 'INSTALLED_APPS'):
             logger.debug("%s.%s not found, moving on" % (app, DIST_SETTINGS))
             continue
         if hasattr(xm, 'XMLRPC_METHODS'):
+            # has a list for us to register
             logger.info("Found XMLRPC_METHODS in %s" % app)
             for path, method in xm.XMLRPC_METHODS:
                 # check if an imported function got passed
                 if isinstance(path, Callable):
-                    logger.info("registering '%s' as '%s')" % (path, method))
+                    # method is a callable, so register it directly
+                    logger.info("registering '%s' => '%s')" % (path, method))
+                    xmlrpcdispatcher.register_function(path, name)
                     continue
                 else:
                     logger.debug("%s not callable, resolving path" % path)
@@ -133,6 +136,7 @@ if hasattr(settings, 'INSTALLED_APPS'):
                 module, attr = path[:dot], path[dot + 1:]
                 logger.debug("checking module %s" % module)
                 try:
+                    # see if the module containing the path to function is importable
                     mod = import_module(module)
                 except ImportError, e:
                     # couldn't import configured module, could be a typo
@@ -141,16 +145,18 @@ if hasattr(settings, 'INSTALLED_APPS'):
                         raise e
                     continue
                 try:
+                    # see if the function path is valid
                     func = getattr(mod, attr)
                 except AttributeError:
                     raise ImproperlyConfigured(
                         'Error registering XML-RPC method: '
                         'module %s doesn\'t define a method "%s"' % (module, attr))
                 if not isinstance(func, Callable):
+                    # path is not a callable, could be a variable containing something else
                     raise ImproperlyConfigured(
                         'Error registering XML-RPC method: '
                         '"%s" is not callable in module %s' % (attr, module))
-                logger.info("registering '%s.%s' as '%s" % (module, attr, method))
+                logger.info("registering '%s.%s' => '%s" % (module, attr, method))
                 xmlrpcdispatcher.register_function(func, method)
 
 # Load up any methods that have been registered with the server in settings
