@@ -98,8 +98,9 @@ def handle_xmlrpc(request):
 
             method_list.append((method, sig, method_help))
 
-        return render_to_response('xmlrpc_get.html', {'methods': method_list},
-                                  context_instance=RequestContext(request))
+        return render_to_response(
+            'xmlrpc_get.html',
+            RequestContext(request, {'methods': method_list}))
 
 
 # Load up any methods that have been registered with the server in settings
