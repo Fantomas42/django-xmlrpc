@@ -47,7 +47,7 @@ from django.utils.translation import gettext as _
 
 
 # Some constants for your pleasure
-#XXX: Any standardization?
+# XXX: Any standardization?
 AUTHENTICATION_FAILED_CODE = 81
 PERMISSION_DENIED_CODE = 82
 
