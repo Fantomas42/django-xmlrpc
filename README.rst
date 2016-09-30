@@ -42,4 +42,6 @@ settings. ::
 Finally we need to register the url of the XML-RPC server. Insert something
 like this in your project's urls.py: ::
 
-  url(r'^xmlrpc/$', 'django_xmlrpc.views.handle_xmlrpc', name='xmlrpc'),
+  from django_xmlrpc.views import handle_xmlrpc
+
+  url(r'^xmlrpc/$', handle_xmlrpc, name='xmlrpc'),
