@@ -7,7 +7,7 @@ views (or indeed any other function) using XML-RPC.
 
 This is a fork of the version hosted at :
 https://code.launchpad.net/~aartemenko/django-xmlrpc/svetlyak40wt
-compatible with Django >= 1.4 and Python >= 2.5.
+compatible with Django >= 1.8 and Python >= 2.5.
 
 If you want to use **django_xmlrpc** for an older version of Django or Python,
 please use an old release.
