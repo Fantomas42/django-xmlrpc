@@ -104,9 +104,10 @@ def handle_xmlrpc(request):
             RequestContext(request, {'methods': method_list}))
 
 # Implement autodiscovery
-# Looks in app directorys for a module called 'xmlrpc_settings'
+# Looks in app directorys for a module called 'xmlrpc'
 # This should contain a distribution XMLRPC_METHODS declaration
-DIST_SETTINGS = 'xmlrpc_settings'
+DIST_SETTINGS = 'xmlrpc'
+
 if hasattr(settings, 'INSTALLED_APPS'):
     logger.info('Inspecting INSTALLED_APPS')
     for app in settings.INSTALLED_APPS:

@@ -37,10 +37,10 @@ There are two ways to register methods that you want to handle:
 
 In your project's settings. ::
 
-  >>> XMLRPC_METHODS = (('path.to.your.method', 'Method name'),
-  ...                   ('path.to.your.othermethod', 'Other Method name'),)
+  XMLRPC_METHODS = (('path.to.your.method', 'Method name'),
+                    ('path.to.your.othermethod', 'Other Method name'),)
 
-In a file called ``xmlrpc_settings.py`` in your application directory.
+In a file called ``xmlrpc.py`` in your application directory. ::
 
   XMLRPC_METHODS = (('path.to.your.method', 'Method name'),
                     ('path.to.your.othermethod', 'Other Method name'),)
