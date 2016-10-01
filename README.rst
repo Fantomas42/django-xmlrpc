@@ -7,7 +7,7 @@ views (or indeed any other function) using XML-RPC.
 
 This is a fork of the version hosted at :
 https://code.launchpad.net/~aartemenko/django-xmlrpc/svetlyak40wt
-compatible with Django >= 1.4 and Python >= 2.5.
+compatible with Django >= 1.8 and Python >= 2.5.
 
 If you want to use **django_xmlrpc** for an older version of Django or Python,
 please use an old release.
@@ -21,11 +21,11 @@ You could retrieve the last sources from
 http://github.com/Fantomas42/django-xmlrpc and run the installation script
 ::
 
-  $> python setup.py install
+  $ python setup.py install
 
 or use pip ::
 
-  $> pip install -e git://github.com/Fantomas42/django-xmlrpc.git#egg=django-xmlrpc
+  $ pip install -e git://github.com/Fantomas42/django-xmlrpc.git#egg=django-xmlrpc
 
 Usage
 =====
@@ -36,10 +36,12 @@ settings.
 Then register methods you want to handle like this in your project'
 settings. ::
 
-  >>> XMLRPC_METHODS = (('path.to.your.method', 'Method name'),
-  ...                   ('path.to.your.othermethod', 'Other Method name'),)
+  XMLRPC_METHODS = (('path.to.your.method', 'Method name'),
+                    ('path.to.your.othermethod', 'Other Method name'),)
 
 Finally we need to register the url of the XML-RPC server. Insert something
 like this in your project's urls.py: ::
 
-  >>> url(r'^xmlrpc/$', 'django_xmlrpc.views.handle_xmlrpc', name='xmlrpc'),
+  from django_xmlrpc.views import handle_xmlrpc
+
+  url(r'^xmlrpc/$', handle_xmlrpc, name='xmlrpc'),

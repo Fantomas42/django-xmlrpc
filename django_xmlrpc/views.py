@@ -39,15 +39,15 @@ LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
-from logging import getLogger
 from collections import Callable
+from logging import getLogger
 
 from django.conf import settings
-from django.template import RequestContext
-from django.shortcuts import render_to_response
 from django.core.exceptions import ImproperlyConfigured
 from django.http import HttpResponse
 from django.http import HttpResponseServerError
+from django.shortcuts import render_to_response
+from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt
 
 from django_xmlrpc.decorators import xmlrpc_func
@@ -98,8 +98,9 @@ def handle_xmlrpc(request):
 
             method_list.append((method, sig, method_help))
 
-        return render_to_response('xmlrpc_get.html', {'methods': method_list},
-                                  context_instance=RequestContext(request))
+        return render_to_response(
+            'xmlrpc_get.html',
+            RequestContext(request, {'methods': method_list}))
 
 
 # Load up any methods that have been registered with the server in settings
