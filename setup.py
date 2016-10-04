@@ -1,6 +1,7 @@
 import os
-from setuptools import setup
+
 from setuptools import find_packages
+from setuptools import setup
 
 import django_xmlrpc
 
@@ -24,7 +25,7 @@ setup(name='django-xmlrpc',
           'Development Status :: 5 - Production/Stable',
           'Environment :: Web Environment',
           'Programming Language :: Python',
-          'Programming Language :: Python 3',
+          'Programming Language :: Python :: 3',
           'Intended Audience :: Developers',
           'Operating System :: OS Independent',
           'Topic :: Software Development :: Libraries :: Python Modules'],
