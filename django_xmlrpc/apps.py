@@ -1,7 +1,6 @@
-"""__init__ module for the django_xmlrpc package
+"""apps module for the django_xmlrpc package
 
 Authors::
-    Graham Binns
     Julien Fache
 
 Credit must go to Brendan W. McAdams <brendan.mcadams@thewintergrp.com>, who
@@ -38,7 +37,10 @@ LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
-VERSION = (0, 1, 6)
-__version__ = '.'.join(map(str, VERSION))
+from django.apps import AppConfig
 
-default_app_config = 'django_xmlrpc.apps.XMLRPCConfig'
+
+class XMLRPCConfig(AppConfig):
+    name = 'django_xmlrpc'
+    label = 'xmlrpc'
+    verbose_name = 'XMRPC'
