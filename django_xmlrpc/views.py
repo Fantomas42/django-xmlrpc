@@ -52,7 +52,7 @@ from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt
 
 from django_xmlrpc.decorators import xmlrpc_func
-from django_xmlrpc.dispatcher import xmlrpcdispatcher
+from django_xmlrpc.dispatcher import xmlrpc_dispatcher
 
 
 logger = getLogger('xmlrpc')
@@ -77,24 +77,24 @@ def handle_xmlrpc(request):
         try:
             response = HttpResponse(content_type='text/xml')
             response.write(
-                xmlrpcdispatcher._marshaled_dispatch(request.body))
+                xmlrpc_dispatcher._marshaled_dispatch(request.body))
             logger.debug(response)
             return response
         except:
             return HttpResponseServerError()
     else:
-        methods = xmlrpcdispatcher.system_listMethods()
+        methods = xmlrpc_dispatcher.system_listMethods()
         method_list = []
 
         for method in methods:
-            sig_ = xmlrpcdispatcher.system_methodSignature(method)
+            sig_ = xmlrpc_dispatcher.system_methodSignature(method)
             sig = {
                 'returns': sig_[0],
                 'args': ', '.join(sig_[1:]),
             }
 
             # This just reads your docblock, so fill it in!
-            method_help = xmlrpcdispatcher.system_methodHelp(method)
+            method_help = xmlrpc_dispatcher.system_methodHelp(method)
 
             method_list.append((method, sig, method_help))
 
@@ -127,7 +127,7 @@ if hasattr(settings, 'INSTALLED_APPS'):
                 if isinstance(path, Callable):
                     # Method is a callable, so register it directly
                     logger.info("registering '%s' => '%s')" % (path, method))
-                    xmlrpcdispatcher.register_function(path, method)
+                    xmlrpc_dispatcher.register_function(path, method)
                     continue
                 else:
                     logger.debug('%s not callable, resolving path' % path)
@@ -163,14 +163,14 @@ if hasattr(settings, 'INSTALLED_APPS'):
                         '"%s" is not callable in module %s' % (attr, module))
                 logger.info("registering '%s.%s' => '%s" % (
                     module, attr, method))
-                xmlrpcdispatcher.register_function(func, method)
+                xmlrpc_dispatcher.register_function(func, method)
 
 # Load up any methods that have been registered with the server in settings
 if hasattr(settings, 'XMLRPC_METHODS'):
     for path, name in settings.XMLRPC_METHODS:
         # If 'path' is actually a function, just add it without fuss
         if isinstance(path, Callable):
-            xmlrpcdispatcher.register_function(path, name)
+            xmlrpc_dispatcher.register_function(path, name)
             continue
 
         # Otherwise we try and find something that we can call
@@ -196,10 +196,10 @@ if hasattr(settings, 'XMLRPC_METHODS'):
                 'Error registering XML-RPC method: '
                 '"%s" is not callable in module %s' % (attr, module))
 
-        xmlrpcdispatcher.register_function(func, name)
+        xmlrpc_dispatcher.register_function(func, name)
 
 
 # Finally, register the introspection and multicall methods
 # with the XML-RPC namespace
-xmlrpcdispatcher.register_introspection_functions()
-xmlrpcdispatcher.register_multicall_functions()
+xmlrpc_dispatcher.register_introspection_functions()
+xmlrpc_dispatcher.register_multicall_functions()
