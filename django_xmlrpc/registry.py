@@ -129,48 +129,8 @@ def autodiscover_register_xmlrpc_methods():
         if hasattr(xm, 'XMLRPC_METHODS'):
             # Has a list for us to register
             logger.info('Found XMLRPC_METHODS in %s' % app)
-            for path, method in xm.XMLRPC_METHODS:
-                # Check if an imported function got passed
-                if isinstance(path, Callable):
-                    # Method is a callable, so register it directly
-                    logger.info("registering '%s' => '%s')" % (path, method))
-                    xmlrpc_dispatcher.register_function(path, method)
-                    continue
-                else:
-                    logger.debug('%s not callable, resolving path' % path)
-                # Find the module containing the function
-                dot = path.rindex('.')
-                module, attr = path[:dot], path[dot + 1:]
-                logger.debug('checking module %s' % module)
-                try:
-                    # See if the module containing the path
-                    # to function is importable
-                    mod = import_module(module)
-                except ImportError as ex:
-                    # Couldn't import configured module, could be a typo
-                    logger.warn("could not import '%s', "
-                                "please check your module's %s" % (
-                                    module, DIST_SETTINGS))
-                    if settings.DEBUG:
-                        raise ex
-                    continue
-                try:
-                    # See if the function path is valid
-                    func = getattr(mod, attr)
-                except AttributeError:
-                    raise ImproperlyConfigured(
-                        'Error registering XML-RPC method: '
-                        'module %s doesn\'t define a method "%s"' % (
-                            module, attr))
-                if not isinstance(func, Callable):
-                    # Path is not a callable,
-                    # could be a variable containing something else
-                    raise ImproperlyConfigured(
-                        'Error registering XML-RPC method: '
-                        '"%s" is not callable in module %s' % (attr, module))
-                logger.info("registering '%s.%s' => '%s" % (
-                    module, attr, method))
-                xmlrpc_dispatcher.register_function(func, method)
+            for path, name in xm.XMLRPC_METHODS:
+                register_xmlrpc_method(path, name)
 
 
 def register_xmlrpc_methods_helpers():
