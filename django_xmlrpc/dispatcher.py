@@ -73,3 +73,5 @@ class DjangoXMLRPCDispatcher(SimpleXMLRPCDispatcher):
             }
 
         return [sig['returns']] + sig['args']
+
+xmlrpcdispatcher = DjangoXMLRPCDispatcher(allow_none=False, encoding=None)

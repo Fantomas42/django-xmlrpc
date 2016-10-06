@@ -52,11 +52,10 @@ from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt
 
 from django_xmlrpc.decorators import xmlrpc_func
-from django_xmlrpc.dispatcher import DjangoXMLRPCDispatcher
+from django_xmlrpc.dispatcher import xmlrpcdispatcher
 
 
 logger = getLogger('xmlrpc')
-xmlrpcdispatcher = DjangoXMLRPCDispatcher(allow_none=False, encoding=None)
 
 
 @xmlrpc_func(returns='string', args=['string'])
