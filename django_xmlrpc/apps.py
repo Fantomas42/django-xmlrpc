@@ -44,3 +44,7 @@ class XMLRPCConfig(AppConfig):
     name = 'django_xmlrpc'
     label = 'xmlrpc'
     verbose_name = 'XMRPC'
+
+    def ready(self):
+        from django_xmlrpc.registry import register_bordel
+        register_bordel()
