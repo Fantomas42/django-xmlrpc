@@ -47,4 +47,6 @@ class XMLRPCConfig(AppConfig):
 
     def ready(self):
         from django_xmlrpc.registry import register_bordel
+        from django_xmlrpc.registry import register_helpers
         register_bordel()
+        register_helpers()

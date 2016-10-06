@@ -149,7 +149,10 @@ def register_bordel():
 
             xmlrpc_dispatcher.register_function(func, name)
 
-    # Finally, register the introspection and multicall methods
-    # with the XML-RPC namespace
+
+def register_helpers():
+    """Register the introspection and multicall methods
+    with the XML-RPC namespace.
+    """
     xmlrpc_dispatcher.register_introspection_functions()
     xmlrpc_dispatcher.register_multicall_functions()
