@@ -38,7 +38,6 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 from collections import Callable
-from importlib import import_module
 from logging import getLogger
 
 from django.conf import settings
@@ -47,8 +46,6 @@ from django.core.exceptions import ImproperlyConfigured
 from django_xmlrpc.dispatcher import xmlrpc_dispatcher
 
 logger = getLogger('xmlrpc.registry')
-
-DIST_SETTINGS = 'xmlrpc'
 
 
 def register_xmlrpc_methods():
@@ -101,8 +98,9 @@ def register_xmlrpc_method(path, name):
 
 
 def legacy_register_xmlrpc_methods():
-    """Load up any methods that have been registered
-    with the server in settings.
+    """
+    Load up any methods that have been registered
+    with the server via settings.
     """
     logger.info('Register XML-RPC methods from settings.XMLRPC_METHODS')
     for path, name in settings.XMLRPC_METHODS:
@@ -110,26 +108,23 @@ def legacy_register_xmlrpc_methods():
 
 
 def autodiscover_register_xmlrpc_methods():
-    """Implement autodiscovery.
-
+    """
     Looks in app directories for a module called 'xmlrpc'
     This should contain a distribution XMLRPC_METHODS declaration.
     """
-    logger.info('Inspecting INSTALLED_APPS')
-    for app in settings.INSTALLED_APPS:
-        logger.debug('Checking %s' % app)
+    logger.info('Register XML-RPC methods by inspecting INSTALLED_APPS')
+    for application in settings.INSTALLED_APPS:
+        logger.debug('Checking %s...' % application)
         try:
-            # Check to see if app has a stock xmlrpc_settings module
-            logger.debug('Looking for %s.%s' % (app, DIST_SETTINGS))
-            xm = import_module('%s.%s' % (app, DIST_SETTINGS))
-            logger.info('Found %s.%s' % (app, DIST_SETTINGS))
+            module = __import__('%s.xmlrpc' % application,
+                                globals(), locals(), [''])
+            logger.debug('Found %s.xmlrpc' % application)
         except ImportError:
-            logger.debug('%s.%s not found, moving on' % (app, DIST_SETTINGS))
+            logger.debug('Not found %s.xmlrpc' % application)
             continue
-        if hasattr(xm, 'XMLRPC_METHODS'):
-            # Has a list for us to register
-            logger.info('Found XMLRPC_METHODS in %s' % app)
-            for path, name in xm.XMLRPC_METHODS:
+        if hasattr(module, 'XMLRPC_METHODS'):
+            logger.info('Found XMLRPC_METHODS in %s.xmlrpc' % application)
+            for path, name in module.XMLRPC_METHODS:
                 register_xmlrpc_method(path, name)
 
 
