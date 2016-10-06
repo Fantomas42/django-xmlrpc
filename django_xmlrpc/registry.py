@@ -53,9 +53,9 @@ def register_xmlrpc_methods():
     Register all xmlrpc methods in the server.
     """
     if hasattr(settings, 'XMLRPC_METHODS'):
-        legacy_register_xmlrpc_methods()
+        register_xmlrpc_methods_legacy()
     else:
-        autodiscover_register_xmlrpc_methods()
+        register_xmlrpc_methods_autodiscover()
     register_xmlrpc_methods_helpers()
 
 
@@ -97,7 +97,7 @@ def register_xmlrpc_method(path, name):
     xmlrpc_dispatcher.register_function(func, name)
 
 
-def legacy_register_xmlrpc_methods():
+def register_xmlrpc_methods_legacy():
     """
     Load up any methods that have been registered
     with the server via settings.
@@ -107,7 +107,7 @@ def legacy_register_xmlrpc_methods():
         register_xmlrpc_method(path, name)
 
 
-def autodiscover_register_xmlrpc_methods():
+def register_xmlrpc_methods_autodiscover():
     """
     Looks in app directories for a module called 'xmlrpc'
     This should contain a distribution XMLRPC_METHODS declaration.
