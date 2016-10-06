@@ -53,7 +53,7 @@ DIST_SETTINGS = 'xmlrpc'
 
 def register_xmlrpc_methods():
     """
-    Register all the bordel.
+    Register all xmlrpc methods in the server.
     """
     if hasattr(settings, 'XMLRPC_METHODS'):
         legacy_register_xmlrpc_methods()
@@ -62,40 +62,51 @@ def register_xmlrpc_methods():
     register_xmlrpc_methods_helpers()
 
 
+def register_xmlrpc_method(path, name):
+    """
+    Register a method into the server.
+    """
+    # If 'path' is actually a function, just add it without fuss
+    if isinstance(path, Callable):
+        logger.info("Registering '%s' => '%s'" % (path, name))
+        xmlrpc_dispatcher.register_function(path, name)
+        return
+
+    # Otherwise we try and find something that we can call
+    logger.debug('%s not callable, resolving path...' % path)
+    i = path.rfind('.')
+    module, attr = path[:i], path[i + 1:]
+
+    try:
+        mod = __import__(module, globals(), locals(), [attr])
+    except ImportError:
+        raise ImproperlyConfigured(
+            "Error registering XML-RPC method: "
+            "module %s can't be imported" % module)
+
+    try:
+        func = getattr(mod, attr)
+    except AttributeError:
+        raise ImproperlyConfigured(
+            'Error registering XML-RPC method: '
+            'module %s doesn\'t define a method "%s"' % (module, attr))
+
+    if not isinstance(func, Callable):
+        raise ImproperlyConfigured(
+            'Error registering XML-RPC method: '
+            '"%s" is not callable in module %s' % (attr, module))
+
+    logger.info("Registering '%s:%s' => '%s'" % (module, attr, name))
+    xmlrpc_dispatcher.register_function(func, name)
+
+
 def legacy_register_xmlrpc_methods():
     """Load up any methods that have been registered
     with the server in settings.
     """
+    logger.info('Register XML-RPC methods from settings.XMLRPC_METHODS')
     for path, name in settings.XMLRPC_METHODS:
-        # If 'path' is actually a function, just add it without fuss
-        if isinstance(path, Callable):
-            xmlrpc_dispatcher.register_function(path, name)
-            continue
-
-        # Otherwise we try and find something that we can call
-        i = path.rfind('.')
-        module, attr = path[:i], path[i + 1:]
-
-        try:
-            mod = __import__(module, globals(), locals(), [attr])
-        except ImportError:
-            raise ImproperlyConfigured(
-                "Error registering XML-RPC method: "
-                "module %s can't be imported" % module)
-
-        try:
-            func = getattr(mod, attr)
-        except AttributeError:
-            raise ImproperlyConfigured(
-                'Error registering XML-RPC method: '
-                'module %s doesn\'t define a method "%s"' % (module, attr))
-
-        if not isinstance(func, Callable):
-            raise ImproperlyConfigured(
-                'Error registering XML-RPC method: '
-                '"%s" is not callable in module %s' % (attr, module))
-
-        xmlrpc_dispatcher.register_function(func, name)
+        register_xmlrpc_method(path, name)
 
 
 def autodiscover_register_xmlrpc_methods():
