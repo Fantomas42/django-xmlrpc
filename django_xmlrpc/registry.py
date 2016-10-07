@@ -66,7 +66,7 @@ def register_xmlrpc_method(path, name):
     """
     # If 'path' is actually a function, just add it without fuss
     if isinstance(path, Callable):
-        logger.info("Registering '%s' => '%s'" % (path, name))
+        logger.info("Registering '%s' => '%s'" % (path.__name__, name))
         xmlrpc_dispatcher.register_function(path, name)
         return
 
