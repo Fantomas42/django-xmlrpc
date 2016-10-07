@@ -1,7 +1,7 @@
-"""Offers a simple XML-RPC dispatcher for django_xmlrpc
+"""apps module for the django_xmlrpc package
 
-Author::
-    Graham Binns
+Authors::
+    Julien Fache
 
 Credit must go to Brendan W. McAdams <brendan.mcadams@thewintergrp.com>, who
 posted the original SimpleXMLRPCDispatcher to the Django wiki:
@@ -37,41 +37,14 @@ LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
-from inspect import getargspec
-
-try:
-    from xmlrpc.server import SimpleXMLRPCDispatcher
-except ImportError:  # Python 2
-    from SimpleXMLRPCServer import SimpleXMLRPCDispatcher
+from django.apps import AppConfig
 
 
-class DjangoXMLRPCDispatcher(SimpleXMLRPCDispatcher):
-    """A simple XML-RPC dispatcher for Django.
+class XMLRPCConfig(AppConfig):
+    name = 'django_xmlrpc'
+    label = 'xmlrpc'
+    verbose_name = 'XMRPC'
 
-    Subclassess SimpleXMLRPCServer.SimpleXMLRPCDispatcher for the purpose of
-    overriding certain built-in methods (it's nicer than monkey-patching them,
-    that's for sure).
-    """
-
-    def system_methodSignature(self, method):
-        """Returns the signature details for a specified method
-
-        method
-            The name of the XML-RPC method to get the details for
-        """
-        # See if we can find the method in our funcs dict
-        # TODO: Handle this better: We really should return something more
-        # formal than an AttributeError
-        func = self.funcs[method]
-
-        try:
-            sig = func._xmlrpc_signature
-        except:
-            sig = {
-                'returns': 'string',
-                'args': ['string' for arg in getargspec(func)[0]],
-            }
-
-        return [sig['returns']] + sig['args']
-
-xmlrpc_dispatcher = DjangoXMLRPCDispatcher(allow_none=False, encoding=None)
+    def ready(self):
+        from django_xmlrpc.registry import register_xmlrpc_methods
+        register_xmlrpc_methods()

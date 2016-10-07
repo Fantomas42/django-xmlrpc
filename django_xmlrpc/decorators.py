@@ -72,8 +72,7 @@ class PermissionDeniedException(Fault):
 
 
 def xmlrpc_method(returns='string', args=None, name=None):
-    """Adds a signature to an XML-RPC function and register
-    it with the dispatcher.
+    """Adds a signature to an XML-RPC function.
 
     returns
         The return type of the function. This can either be a string
