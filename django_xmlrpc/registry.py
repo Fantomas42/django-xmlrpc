@@ -40,6 +40,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 from collections import Callable
 from logging import getLogger
 
+from django.apps import apps
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 
@@ -113,17 +114,18 @@ def register_xmlrpc_methods_autodiscover():
     This should contain a distribution XMLRPC_METHODS declaration.
     """
     logger.info('Register XML-RPC methods by inspecting INSTALLED_APPS')
-    for application in settings.INSTALLED_APPS:
-        logger.debug('Checking %s...' % application)
+    for application in apps.get_app_configs():
+        application_name = application.name
+        logger.debug('Checking %s...' % application_name)
         try:
-            module = __import__('%s.xmlrpc' % application,
+            module = __import__('%s.xmlrpc' % application_name,
                                 globals(), locals(), [''])
-            logger.debug('Found %s.xmlrpc' % application)
+            logger.debug('Found %s.xmlrpc' % application_name)
         except ImportError:
-            logger.debug('Not found %s.xmlrpc' % application)
+            logger.debug('Not found %s.xmlrpc' % application_name)
             continue
         if hasattr(module, 'XMLRPC_METHODS'):
-            logger.info('Found XMLRPC_METHODS in %s.xmlrpc' % application)
+            logger.info('Found XMLRPC_METHODS in %s.xmlrpc' % application_name)
             for path, name in module.XMLRPC_METHODS:
                 register_xmlrpc_method(path, name)
 
