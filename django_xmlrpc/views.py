@@ -47,17 +47,10 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt
 
-from django_xmlrpc.decorators import xmlrpc_func
 from django_xmlrpc.dispatcher import xmlrpc_dispatcher
 
 
 logger = getLogger('xmlrpc.views')
-
-
-@xmlrpc_func(returns='string', args=['string'])
-def test_xmlrpc(text):
-    """Simply returns the args passed to it as a string"""
-    return "Here's a response! %s" % str(text)
 
 
 @csrf_exempt
