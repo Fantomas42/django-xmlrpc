@@ -5,9 +5,8 @@ Django XML-RPC
 **Django_xmlrpc** offers a means by which a Django developer can expose their
 views (or indeed any other function) using XML-RPC.
 
-This is a fork of the version hosted at :
-https://code.launchpad.net/~aartemenko/django-xmlrpc/svetlyak40wt
-compatible with Django >= 1.8 and Python >= 2.5.
+This is a fork of the original version made by Svetlyak40wt compatible with
+Django >= 1.8 and Python >= 2.5.
 
 If you want to use **django_xmlrpc** for an older version of Django or Python,
 please use an old release.
@@ -44,6 +43,15 @@ In a file called ``xmlrpc.py`` in your application directory. ::
 
   XMLRPC_METHODS = (('path.to.your.method', 'Method name'),
                     ('path.to.your.othermethod', 'Other Method name'),)
+
+A registered method should look like this: ::
+
+  from django_xmlrpc.decorators import xmlrpc_func
+
+  @xmlrpc_func(returns='string', args=['string'])
+  def test_xmlrpc(text):
+      """Simply returns the args passed to it as a string"""
+      return "Here's a response! %s" % str(text)
 
 Finally we need to register the url of the XML-RPC server. Insert something
 like this in your project's urls.py: ::
