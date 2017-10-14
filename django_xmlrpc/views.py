@@ -43,8 +43,7 @@ from logging import getLogger
 
 from django.http import HttpResponse
 from django.http import HttpResponseServerError
-from django.shortcuts import render_to_response
-from django.template import RequestContext
+from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 
 from django_xmlrpc.dispatcher import xmlrpc_dispatcher
@@ -87,6 +86,4 @@ def handle_xmlrpc(request):
 
             method_list.append((method, sig, method_help))
 
-        return render_to_response(
-            'xmlrpc_get.html',
-            RequestContext(request, {'methods': method_list}))
+        return render(request, 'xmlrpc_get.html', {'methods': method_list})
