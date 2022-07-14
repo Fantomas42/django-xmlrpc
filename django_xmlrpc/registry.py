@@ -37,7 +37,12 @@ LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
-from collections import Callable
+import sys
+
+if sys.version_info[0:2] >= (3, 10):
+    from collections.abc import Callable
+else:
+    from collections import Callable
 from logging import getLogger
 
 from django.apps import apps
